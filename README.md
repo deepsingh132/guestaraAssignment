@@ -2,6 +2,8 @@
 
 This is a Node.js backend application for managing a menu that includes categories, subcategories, and items. The application allows CRUD operations for categories, subcategories, and items, and provides search functionality for items by name in the menu.
 
+## **Postman API Documentation link**: https://documenter.getpostman.com/view/26609332/2sA3s7iopL
+
 ## **Features**
 
 - Create, update, retrieve, and delete categories, subcategories, and items.
