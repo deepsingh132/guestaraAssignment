@@ -8,7 +8,7 @@ This is a Node.js backend application for managing a menu that includes categori
 
 ## **Features**
 
-- Create, update, retrieve, and delete categories, subcategories, and items.
+- Create, update and retrieve categories, subcategories, and items.
 - Items can be associated directly with a category or with a subcategory under a category.
 - Search items by name.
 - Documentation available via Postman.
