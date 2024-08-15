@@ -1,0 +1,1188 @@
+{
+	"info": {
+		"_postman_id": "8082ebd1-639e-4f85-8a91-6eb0eb4a8d21",
+		"name": "Guestara API",
+		"description": "Welcome to the **Guestara Menu Management API** Postman Collection. This collection contains all the necessary API endpoints for managing categories, subcategories, and items within a menu structure. Each endpoint allows you to perform CRUD (Create, Read, Update, Delete) operations on categories, subcategories, and items, along with search functionality for items by name.\n\nThe API is built using Node.js, Express.js, TypeScript, Prisma ORM, and PostgreSQL.\n\n## **Collection Structure**\n\nThe collection is divided into the following folders:\n\n1. **Categories**\n    \n    - Contains all endpoints related to managing categories.\n        \n    - Create, retrieve and update categories.\n        \n    - Retrieve categories by ID or name.\n        \n    - Fetch all categories at once.\n        \n2. **Subcategories**\n    \n    - Contains all endpoints related to managing subcategories.\n        \n    - Create, retrieve and update subcategories.\n        \n    - Retrieve subcategories by ID or name.\n        \n    - Fetch all subcategories or those under a specific category.\n        \n3. **Items**\n    \n    - Contains all endpoints related to managing items.\n        \n    - Create, retrieve and update items.\n        \n    - Retrieve items by ID or name.\n        \n    - Fetch all items, items under a category, or items under a subcategory.\n        \n4. **Search**\n    \n    - Contains an endpoint for searching items by name.\n        \n    - Search is flexible and allows partial name matching.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26609332"
+	},
+	"item": [
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Create Category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Snacks\",\r\n    \"image\": \"https://media.istockphoto.com/id/938742222/photo/cheesy-pepperoni-pizza.jpg?s=612x612&w=0&k=20&c=D1z4xPCs-qQIZyUqRcHrnsJSJy_YbUD9udOrXpilNpI=\",\r\n    \"description\": \"Cheesy Pepporini Pizza with a delightful crust\",\r\n    \"taxApplicable\": true,\r\n    \"tax\": 25.55\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/category",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"category"
+							]
+						},
+						"description": "- **Endpoint**: `POST /categories`\n    \n- **Description**: Creates a new category.\n    \n\n``` json\n{\n  \"name\": \"Beverages\",\n  \"image\": \"http://example.com/image.jpg\",\n  \"description\": \"Drinks and beverages\",\n  \"taxApplicable\": true,\n  \"tax\": 10.5,\n  \"taxType\": \"percentage\"\n}\n\n ```\n\n**Response**:\n\n- **201 Created**: Category successfully created.\n    \n- **400 Bad Request**: Invalid input."
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array');\r",
+									"    \r",
+									"    responseData.forEach(function(category) {\r",
+									"        pm.expect(category).to.have.property('id');\r",
+									"        pm.expect(category).to.have.property('name');\r",
+									"        pm.expect(category).to.have.property('image');\r",
+									"        pm.expect(category).to.have.property('description');\r",
+									"        pm.expect(category).to.have.property('taxApplicable');\r",
+									"        pm.expect(category).to.have.property('tax');\r",
+									"        pm.expect(category).to.have.property('taxType');\r",
+									"        pm.expect(category).to.have.property('createdAt');\r",
+									"        pm.expect(category).to.have.property('updatedAt');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Image URL is in a valid format\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  responseData.forEach(function(category) {\r",
+									"    pm.expect(category.image).to.match(/^http(s)?:\\/\\/.+/);\r",
+									"  });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Tax is a non-negative number\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    responseData.forEach(function(category) {\r",
+									"        pm.expect(category.tax).to.be.a('number').and.to.be.at.least(0);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/categories",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"categories"
+							]
+						},
+						"description": "Endpoint: GET /categories  \nDescription: Retrieves all categories.\n\nResponse:\n\n200 OK:\n\n``` json\n[  \n{  \n\"id\": 1,  \n\"name\": \"Beverages\",  \n\"image\": \"[http://example.com/image.jpg\"](http://example.com/image.jpg),  \n\"description\": \"Drinks and beverages\",  \n\"taxApplicable\": true,  \n\"tax\": 10.5,  \n\"taxType\": \"percentage\",  \n\"subCategories\": \\[\\],  \n\"items\": \\[\\]  \n}  \n]\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"The response must have the required fields\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  const requiredFields = [\"id\", \"name\", \"image\", \"description\", \"taxApplicable\", \"tax\", \"taxType\", \"createdAt\", \"updatedAt\"];\r",
+									"\r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  requiredFields.forEach(function(field) {\r",
+									"    pm.expect(responseData[field]).to.exist;\r",
+									"  });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Name is updated to 'Beverages'\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.name).to.equal(\"Beverages\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Tax Applicable should be a boolean value\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  pm.expect(responseData.taxApplicable).to.be.a('boolean');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Beverages\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/category/7fe0d530-6824-4dae-8ef7-f25d736ac2a9",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"category",
+								"7fe0d530-6824-4dae-8ef7-f25d736ac2a9"
+							]
+						},
+						"description": "- **Endpoint**: `PUT /categories/{id}`\n    \n- **Description**: Updates the details of an existing category.\n    \n- **Request Body**: (Partial updates allowed)\n    \n\n``` json\n{   \n\"name\": \"Updated Category Name\"   \n}\n\n ```\n\n**Response**:\n\n- **200 OK**: Category successfully updated.\n    \n- **404 Not Found**: Category not found.\n    \n- **400 Bad Request**: Invalid input."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category By Name or Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.id).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.name).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.image).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.description).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.taxApplicable).to.exist.and.to.be.a('boolean');\r",
+									"    pm.expect(responseData.tax).to.exist.and.to.be.a('number');\r",
+									"    pm.expect(responseData.createdAt).to.exist.and.to.be.a('string');\r",
+									"    pm.expect(responseData.updatedAt).to.exist.and.to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Tax is a non-negative number\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.tax).to.be.a('number');\r",
+									"    pm.expect(responseData.tax).to.be.at.least(0);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Tax type is either null or a valid type\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.taxType).to.satisfy(function (value) {\r",
+									"        return value === null || (typeof value === 'string' && value.length > 0);\r",
+									"    }, \"Tax type should be either null or a non-empty string\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/category?id=4c8cd2d1-4da9-40b5-bb70-004be6a4ac5f",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"category"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "4c8cd2d1-4da9-40b5-bb70-004be6a4ac5f"
+								}
+							]
+						},
+						"description": "- **Endpoint**: `GET /categories/{id_or_name}`\n    \n- **Description**: Retrieves a specific category by ID or name.\n    \n- **Response**:\n    \n    - **200 OK**: Returns the category object.\n        \n    - **404 Not Found**: Category not found."
+					},
+					"response": []
+				}
+			],
+			"description": "This folder is divided into 4 requests\n\n**Categories**\n\n1. Contains all endpoints related to managing categories.\n2. Create, retrieve and update categories.\n3. Retrieve categories by ID or name.\n4. Fetch all categories at once."
+		},
+		{
+			"name": "SubCategory",
+			"item": [
+				{
+					"name": "Create new SubCategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is within an acceptable range\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response schema for required fields and data types\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  pm.expect(responseData).to.have.property('id').that.is.a('number');\r",
+									"  pm.expect(responseData).to.have.property('name').that.is.a('string');\r",
+									"  pm.expect(responseData).to.have.property('description').that.is.a('string');\r",
+									"  pm.expect(responseData).to.have.property('category_id').that.is.a('number');\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Soft Drinks\",\r\n    \"image\": \"https://preview.redd.it/fizzy-drinks-v0-yyr6vtruhzbb1.jpg?width=1080&crop=smart&auto=webp&s=e2334d786bff00150de9989c892846864873149a\",\r\n    \"description\": \"Non-alcoholic beverages\",\r\n    \"categoryId\": \"7fe0d530-6824-4dae-8ef7-f25d736ac2a9\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/subcategory",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"subcategory"
+							]
+						},
+						"description": "This endpoint makes an HTTP POST request to localhost:5000/api/subcategory in order to create a new subcategory. The request payload is expected to be in raw format.\n\n**Endpoint**: `POST /api/subcategory`\n\n### Response\n\nThe response of this request is a JSON schema.\n\n``` json\n{  \n\"name\": \"Soft Drinks\",  \n\"image\": \"http://example.com/image.jpg\",  \n\"description\": \"Non-alcoholic beverages\",  \n\"taxApplicable\": true,  \n\"tax\": 5.0  \n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All SubCategories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type header is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Validate the schema for each subcategory object\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+									"\r",
+									"    responseData.forEach(function(subcategory) {\r",
+									"        pm.expect(subcategory).to.have.property('id').that.is.a('string');\r",
+									"        pm.expect(subcategory).to.have.property('name').that.is.a('string');\r",
+									"        pm.expect(subcategory).to.have.property('image').that.is.a('string');\r",
+									"        pm.expect(subcategory).to.have.property('description').that.is.a('string');\r",
+									"        pm.expect(subcategory).to.have.property('taxApplicable').that.is.a('boolean');\r",
+									"        pm.expect(subcategory).to.have.property('tax').that.is.a('number');\r",
+									"        pm.expect(subcategory).to.have.property('categoryId').that.is.a('string');\r",
+									"        pm.expect(subcategory).to.have.property('createdAt').that.is.a('string');\r",
+									"        pm.expect(subcategory).to.have.property('updatedAt').that.is.a('string');\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/subcategories",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"subcategories"
+							]
+						},
+						"description": "The `GET` request to `/api/subcategories` endpoint retrieves a list of subcategories. The response is a JSON array containing objects with the following properties:\n\n- `id` (string): The unique identifier of the subcategory.\n    \n- `name` (string): The name of the subcategory.\n    \n- `image` (string): The URL or path to the image associated with the subcategory.\n    \n- `description` (string): A brief description of the subcategory.\n    \n- `taxApplicable` (boolean): Indicates whether tax is applicable to the subcategory.\n    \n- `tax` (number): The tax rate applicable to the subcategory.\n    \n- `categoryId` (string): The identifier of the category to which the subcategory belongs.\n    \n- `createdAt` (string): The timestamp of when the subcategory was created.\n    \n- `updatedAt` (string): The timestamp of when the subcategory was last updated.\n    \n\n- **Endpoint**: `GET /subcategories`\n    \n- **Description**: Retrieves all subcategories.\n    \n- **Response**:\n    \n    - **200 OK**:\n        \n\n``` json\n[\n  {\n    \"id\": 1,\n    \"name\": \"Soft Drinks\",\n    \"categoryId\": 1,\n    \"image\": \"http://example.com/image.jpg\",\n    \"description\": \"Non-alcoholic beverages\",\n    \"taxApplicable\": true,\n    \"tax\": 5.0,\n    \"items\": []\n  }\n]\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllSubCategoriesByCategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Validate the response schema for id, name, image, description, taxApplicable, tax, categoryId, createdAt, and updatedAt fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array');\r",
+									"    responseData.forEach(function(item) {\r",
+									"        pm.expect(item).to.have.property('id').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('name').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('image').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('description').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('taxApplicable').that.is.a('boolean');\r",
+									"        pm.expect(item).to.have.property('tax').that.is.a('number');\r",
+									"        pm.expect(item).to.have.property('categoryId').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('createdAt').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('updatedAt').that.is.a('string');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/subcategories/category/7fe0d530-6824-4dae-8ef7-f25d736ac2a9",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"subcategories",
+								"category",
+								"7fe0d530-6824-4dae-8ef7-f25d736ac2a9"
+							]
+						},
+						"description": "### Get Subcategories by Category ID\n\nThis endpoint retrieves subcategories based on the provided category ID.\n\n#### Request\n\n- Method: GET\n    \n- URL: `localhost:5000/api/subcategories/category/7fe0d530-6824-4dae-8ef7-f25d736ac2a9`\n    \n\n#### Response\n\nThe response will be a JSON array containing subcategory objects with the following attributes:\n\n- `id` (string): The unique identifier of the subcategory.\n    \n- `name` (string): The name of the subcategory.\n    \n- `image` (string): The URL of the subcategory image.\n    \n- `description` (string): The description of the subcategory.\n    \n- `taxApplicable` (boolean): Indicates if tax is applicable to the subcategory.\n    \n- `tax` (number): The tax rate applicable to the subcategory.\n    \n- `categoryId` (string): The ID of the category to which the subcategory belongs.\n    \n- `createdAt` (string): The timestamp of the subcategory's creation.\n    \n- `updatedAt` (string): The timestamp of the subcategory's last update.\n    \n\n**Response**:\n\n- **200 OK**: Returns an array of subcategories.\n    \n- **404 Not Found**: Category not found."
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllSubCategoriesByNameOrId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData).to.have.property('id');\r",
+									"    pm.expect(responseData).to.have.property('name');\r",
+									"    pm.expect(responseData).to.have.property('image');\r",
+									"    pm.expect(responseData).to.have.property('description');\r",
+									"    pm.expect(responseData).to.have.property('taxApplicable');\r",
+									"    pm.expect(responseData).to.have.property('tax');\r",
+									"    pm.expect(responseData).to.have.property('categoryId');\r",
+									"    pm.expect(responseData).to.have.property('createdAt');\r",
+									"    pm.expect(responseData).to.have.property('updatedAt');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Tax is a non-negative number\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.tax).to.be.a('number');\r",
+									"    pm.expect(responseData.tax).to.be.at.least(0);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is 'application/json'\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is within an acceptable range\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/subcategory?name=drinks",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"subcategory"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "drinks"
+								}
+							]
+						},
+						"description": "### GET /api/subcategory\n\nThis endpoint retrieves subcategory details based on the provided name parameter.\n\n#### Request\n\n- Query Parameters\n    \n    - name: (string) The name of the subcategory to retrieve.\n        \n    - id: (string) The id of the subcategory to retrieve.\n        \n\n#### Response\n\n- **200 OK**: Returns the subcategory object.\n    \n- **404 Not Found**: Subcategory not found.  \n    \n\nThe response will be a JSON object with the following schema:\n\n``` json\n{\n    \"id\": \"\",\n    \"name\": \"\",\n    \"image\": \"\",\n    \"description\": \"\",\n    \"taxApplicable\": true,\n    \"tax\": 0,\n    \"categoryId\": \"\",\n    \"createdAt\": \"\",\n    \"updatedAt\": \"\"\n}\n\n ```\n\n- `id`: (string) The unique identifier for the subcategory.\n    \n- `name`: (string) The name of the subcategory.\n    \n- `image`: (string) The URL of the image associated with the subcategory.\n    \n- `description`: (string) The description of the subcategory.\n    \n- `taxApplicable`: (boolean) Indicates if tax is applicable for the subcategory.\n    \n- `tax`: (number) The tax percentage applicable to the subcategory.\n    \n- `categoryId`: (string) The unique identifier of the category to which the subcategory belongs.\n    \n- `createdAt`: (string) The timestamp of when the subcategory was created.\n    \n- `updatedAt`: (string) The timestamp of when the subcategory was last updated."
+					},
+					"response": []
+				},
+				{
+					"name": "EditSubCategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData).to.have.property('id');\r",
+									"    pm.expect(responseData).to.have.property('name');\r",
+									"    pm.expect(responseData).to.have.property('image');\r",
+									"    pm.expect(responseData).to.have.property('description');\r",
+									"    pm.expect(responseData).to.have.property('taxApplicable');\r",
+									"    pm.expect(responseData).to.have.property('tax');\r",
+									"    pm.expect(responseData).to.have.property('categoryId');\r",
+									"    pm.expect(responseData).to.have.property('createdAt');\r",
+									"    pm.expect(responseData).to.have.property('updatedAt');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Tax is a non-negative integer\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData.tax).to.exist;\r",
+									"  pm.expect(responseData.tax).to.be.a('number');\r",
+									"  pm.expect(responseData.tax).to.be.at.least(0);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"taxApplicable\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/subcategory/1d4ed282-066e-4d18-a9fc-b972c0a0fde6",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"subcategory",
+								"1d4ed282-066e-4d18-a9fc-b972c0a0fde6"
+							]
+						},
+						"description": "### Update Subcategory\n\nThis endpoint allows the client to update the details for a specific existing subcategory.\n\n**Endpoint**: `PUT /subcategories/{id}`\n\n#### Request Body (Partial updates allowed)\n\n- `taxApplicable` (boolean) - Indicates whether tax applicable to the subcategory.\n    \n\n#### Response\n\nUpon a successful update, the server responds with a status code of 200 and a JSON object containing the updated subcategory details, including the updated `taxApplicable` field.\n\nExample:\n\n``` json\n{\n    \"id\": \"\",\n    \"name\": \"\",\n    \"image\": \"\",\n    \"description\": \"\",\n    \"taxApplicable\": true,\n    \"tax\": 0,\n    \"categoryId\": \"\",\n    \"createdAt\": \"\",\n    \"updatedAt\": \"\"\n}\n\n ```"
+					},
+					"response": []
+				}
+			],
+			"description": "This folder is divided into 5 requests:\n\n- **Subcategories**\n    \n\n1. Contains all endpoints related to managing subcategories.\n    \n2. Create, retrieve and update subcategories.\n    \n3. Retrieve subcategories by ID or name.\n    \n4. Fetch all subcategories or those under a specific category."
+		},
+		{
+			"name": "Item",
+			"item": [
+				{
+					"name": "Create new Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 201\", function () {\r",
+									"  pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 700ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(700);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.id).to.exist;\r",
+									"    pm.expect(responseData.name).to.exist;\r",
+									"    pm.expect(responseData.image).to.exist;\r",
+									"    pm.expect(responseData.description).to.exist;\r",
+									"    pm.expect(responseData.taxApplicable).to.exist;\r",
+									"    pm.expect(responseData.baseAmount).to.exist;\r",
+									"    pm.expect(responseData.discount).to.exist;\r",
+									"    pm.expect(responseData.totalAmount).to.exist;\r",
+									"    pm.expect(responseData.createdAt).to.exist;\r",
+									"    pm.expect(responseData.updatedAt).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"ID is a non-empty string\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData).to.be.an('object');\r",
+									"  pm.expect(responseData.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"ID should be a non-empty string\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Tax is either null or a valid value\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.tax).to.satisfy(function (value) {\r",
+									"        return value === null || !isNaN(value);\r",
+									"    }, \"Tax should be either null or a valid number\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Burger\",\r\n    \"image\": \"https://www.indianhealthyrecipes.com/wp-content/uploads/2016/02/veg-burger-recipe-1.jpg\",\r\n    \"description\": \"delecious burger with melting cheese\",\r\n    \"taxApplicable\": true,\r\n    \"baseAmount\": 55,\r\n    \"subCategory\": \"b8fc3a02-b77f-43b2-8802-c531ac82d196\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/item",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"item"
+							]
+						},
+						"description": "This API endpoint allows you to create a new item by sending an HTTP POST request to localhost:5000/api/item. The request should include a JSON payload in the raw request body, with the following parameters:\n\n- **Endpoint**: `POST /api/item`\n    \n- **Description**: Creates a new item under a specific category or subcategory.\n    \n\n- name (string): The name of the item.\n    \n- image (string): The URL or path to the image of the item.\n    \n- description (string): A brief description of the item.\n    \n- taxApplicable (boolean): Indicates whether tax is applicable to the item.\n    \n- baseAmount (number): The base amount or price of the item.\n    \n- subCategory (string): The sub-category to which the item belongs.\n    \n\nUpon successful creation of the item, the API will return a response with the relevant item details.\n\n``` json\n{\n  \"name\": \"Coca-Cola\",\n  \"image\": \"http://example.com/image.jpg\",\n  \"description\": \"Refreshing soft drink\",\n  \"taxApplicable\": true,\n  \"tax\": 5.0,\n  \"baseAmount\": 50.0,\n  \"discount\": 5.0,\n  \"totalAmount\": 45.0\n}\n\n ```\n\n**Response**:\n\n- **201 Created**: Item successfully created.\n    \n- **400 Bad Request**: Invalid input.\n    \n- **404 Not Found**: Category or Subcategory not found."
+					},
+					"response": []
+				},
+				{
+					"name": "Get all items",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Validate the response schema for id, name, image, description, taxApplicable, tax, baseAmount, discount, totalAmount, subCategoryId, categoryId, createdAt, and updatedAt\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+									"    \r",
+									"    responseData.forEach(function(item) {\r",
+									"        pm.expect(item).to.have.property('id').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('name').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('image').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('description').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('taxApplicable').that.is.a('boolean');\r",
+									"        pm.expect(item).to.have.property('tax').that.is.a('number');\r",
+									"        pm.expect(item).to.have.property('baseAmount').that.is.a('number');\r",
+									"        pm.expect(item).to.have.property('discount').that.is.a('number');\r",
+									"        pm.expect(item).to.have.property('totalAmount').that.is.a('number');\r",
+									"        pm.expect(item).to.have.property('createdAt').that.is.a('string');\r",
+									"        pm.expect(item).to.have.property('updatedAt').that.is.a('string');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/items",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"items"
+							]
+						},
+						"description": "# Get Items\n\nThis endpoint makes an HTTP GET request to fetch a list of items from the server.\n\n- **Endpoint**: `GET /items`\n    \n- **Response**:\n    \n    - **200 OK**:\n        \n\n## Request\n\nThe request does not require any parameters.\n\n## Response\n\nUpon a successful execution, the server responds with a status code of 200 and a JSON array containing the details of the items. Each item object includes the following properties:\n\n- `id` (string): The unique identifier of the item.\n    \n- `name` (string): The name of the item.\n    \n- `image` (string): The URL of the item's image.\n    \n- `description` (string): A brief description of the item.\n    \n- `taxApplicable` (boolean): Indicates whether tax is applicable to the item.\n    \n- `tax` (number): The tax amount applicable to the item.\n    \n- `baseAmount` (number): The base amount of the item.\n    \n- `discount` (number): The discount amount applicable to the item.\n    \n- `totalAmount` (number): The total amount after applying tax and discount to the base amount.\n    \n- `subCategoryId` (string): The unique identifier of the sub-category to which the item belongs.\n    \n- `categoryId` (string): The unique identifier of the category to which the item belongs.\n    \n- `createdAt` (string): The timestamp indicating the creation date of the item.\n    \n- `updatedAt` (string): The timestamp indicating the last update date of the item.\n    \n\nExample response:\n\n``` json\n[\n  {\n    \"id\": 1,\n    \"name\": \"Coca-Cola\",\n    \"image\": \"http://example.com/image.jpg\",\n    \"description\": \"Refreshing soft drink\",\n    \"taxApplicable\": true,\n    \"tax\": 5.0,\n    \"baseAmount\": 50.0,\n    \"discount\": 5.0,\n    \"totalAmount\": 45.0,\n    \"categoryId\": 1,\n    \"subCategoryId\": 1\n  }\n]\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Items By Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Validate the response schema for the item object\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData).to.be.an('array');\r",
+									"  responseData.forEach(function(item) {\r",
+									"    pm.expect(item).to.be.an('object');\r",
+									"    pm.expect(item).to.have.property('id').that.is.a('string');\r",
+									"    pm.expect(item).to.have.property('name').that.is.a('string');\r",
+									"    pm.expect(item).to.have.property('image').that.is.a('string');\r",
+									"    pm.expect(item).to.have.property('description').that.is.a('string');\r",
+									"    pm.expect(item).to.have.property('taxApplicable').that.is.a('boolean');\r",
+									"    pm.expect(item).to.have.property('tax').that.is.a('number');\r",
+									"    pm.expect(item).to.have.property('baseAmount').that.is.a('number');\r",
+									"    pm.expect(item).to.have.property('discount').that.is.a('number');\r",
+									"    pm.expect(item).to.have.property('totalAmount').that.is.a('number');\r",
+									"    pm.expect(item).to.have.property('subCategoryId').that.is.a('string');\r",
+									"    pm.expect(item).to.have.property('categoryId').that.is.a('string');\r",
+									"    pm.expect(item).to.have.property('createdAt').that.is.a('string');\r",
+									"    pm.expect(item).to.have.property('updatedAt').that.is.a('string');\r",
+									"  });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type header is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Verify the presence of required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array');\r",
+									"    \r",
+									"    const requiredFields = [\"id\", \"name\", \"image\", \"description\", \"taxApplicable\", \"tax\", \"baseAmount\", \"discount\", \"totalAmount\", \"subCategoryId\", \"categoryId\", \"createdAt\", \"updatedAt\"];\r",
+									"    \r",
+									"    responseData.forEach(function(item) {\r",
+									"        requiredFields.forEach(function(field) {\r",
+									"            pm.expect(item).to.have.property(field);\r",
+									"        });\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/item/category/7fe0d530-6824-4dae-8ef7-f25d736ac2a9",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"item",
+								"category",
+								"7fe0d530-6824-4dae-8ef7-f25d736ac2a9"
+							]
+						},
+						"description": "# Get Item by Category\n\nThis endpoint retrieves the details of items belonging to a specific category.\n\n## Request\n\n**Endpoint**: `GET /api/item/category/{categoryId}`\n\n### Request URL\n\n```\nGET localhost:5000/api/item/category/7fe0d530-6824-4dae-8ef7-f25d736ac2a9\n\n ```\n\n## Response\n\nUpon a successful request, the server responds with a status code of 200 and a JSON array containing the details of items. Each item object includes the following properties:\n\n- `id` (string): The unique identifier of the item.\n    \n- `name` (string): The name of the item.\n    \n- `image` (string): The URL of the item's image.\n    \n- `description` (string): A brief description of the item.\n    \n- `taxApplicable` (boolean): Indicates whether tax is applicable to the item.\n    \n- `tax` (number): The tax amount applicable to the item.\n    \n- `baseAmount` (number): The base amount of the item.\n    \n- `discount` (number): The discount amount applicable to the item.\n    \n- `totalAmount` (number): The total amount after applying tax and discount.\n    \n- `subCategoryId` (string): The unique identifier of the sub-category to which the item belongs.\n    \n- `categoryId` (string): The unique identifier of the category to which the item belongs.\n    \n- `createdAt` (string): The timestamp of the item's creation.\n    \n- `updatedAt` (string): The timestamp of the item's last update.\n    \n\n**Response**:\n\n- **200 OK**: Returns an array of items.\n    \n- **404 Not Found**: Category not found."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Items By SubCategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+									"\r",
+									"    responseData.forEach(function(item) {\r",
+									"        pm.expect(item).to.include.all.keys(\r",
+									"            'id', 'name', 'image', 'description', 'taxApplicable', 'tax', \r",
+									"            'baseAmount', 'discount', 'totalAmount', 'subCategoryId', \r",
+									"            'categoryId', 'createdAt', 'updatedAt'\r",
+									"        );\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Id is a non-empty string\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  responseData.forEach(function(item) {\r",
+									"    pm.expect(item.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Id should be a non-empty string\");\r",
+									"  });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Image is a valid URL format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    responseData.forEach(function(item) {\r",
+									"        pm.expect(item.image).to.match(/^https?:\\/\\/\\S+/);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/item/subcategory/b8fc3a02-b77f-43b2-8802-c531ac82d196",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"item",
+								"subcategory",
+								"b8fc3a02-b77f-43b2-8802-c531ac82d196"
+							]
+						},
+						"description": "This endpoint retrieves the details of a specific item subcategory by making an HTTP GET request to localhost:5000/api/item/subcategory/{subcategory_id}.\n\n### Request\n\nThe request does not require a request body. The endpoint expects the subcategory ID as a path parameter in the URL.\n\n**Endpoint**: `GET /api/item/subcategory/{subCategoryId}`\n\n### Response\n\nUpon a successful request, the server responds with a status code of 200 and a JSON object containing the details of the item subcategory. The response includes the following fields:\n\n- `id` (string): The ID of the item.\n    \n- `name` (string): The name of the item.\n    \n- `image` (string): The URL of the item's image.\n    \n- `description` (string): The description of the item.\n    \n- `taxApplicable` (boolean): Indicates whether tax is applicable to the item.\n    \n- `tax` (number): The tax amount applicable to the item.\n    \n- `baseAmount` (number): The base amount of the item.\n    \n- `discount` (number): The discount amount applicable to the item.\n    \n- `totalAmount` (number): The total amount of the item after tax and discount calculations.\n    \n- `subCategoryId` (string): The ID of the subcategory to which the item belongs.\n    \n- `categoryId` (string): The ID of the category to which the item belongs.\n    \n- `createdAt` (string): The timestamp of the item's creation.\n    \n- `updatedAt` (string): The timestamp of the item's last update.\n    \n\n**Response**:\n\n- **200 OK**: Returns an array of items.\n    \n- **404 Not Found**: Subcategory not found."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Items by Name or Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.id).to.be.a('string');\r",
+									"    pm.expect(responseData.name).to.be.a('string');\r",
+									"    pm.expect(responseData.image).to.be.a('string');\r",
+									"    pm.expect(responseData.description).to.be.a('string');\r",
+									"    pm.expect(responseData.taxApplicable).to.be.a('boolean');\r",
+									"    pm.expect(responseData.tax).to.be.a('number');\r",
+									"    pm.expect(responseData.baseAmount).to.be.a('number');\r",
+									"    pm.expect(responseData.discount).to.be.a('number');\r",
+									"    pm.expect(responseData.totalAmount).to.be.a('number');\r",
+									"    pm.expect(responseData.subCategoryId).to.be.a('string');\r",
+									"    pm.expect(responseData.createdAt).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Id is a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Id should not be empty\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Name is a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Name should not be empty\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Image is a valid URL\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.image).to.match(/^http(s)?:\\/\\/.*/, \"Image should be a valid URL\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"CreatedAt and UpdatedAt are in valid date format\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData.createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/, \"CreatedAt should be in valid date format\");\r",
+									"    pm.expect(responseData.updatedAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/, \"UpdatedAt should be in valid date format\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/item?id=c6a357d8-cf23-4ef0-ab6b-a67c98891282",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"item"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "c6a357d8-cf23-4ef0-ab6b-a67c98891282"
+								},
+								{
+									"key": "name",
+									"value": "burger",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This endpoint retrieves details of a specific item by its unique identifier.\n\n### Request\n\n- Method: GET\n    \n- **Endpoint**: `GET /api/item`\n    \n- Query Parameter:\n    \n    - id (string, optional): The unique identifier of the item.\n        \n    - name (string, optional): The name of the item.\n        \n\n### Response\n\nUpon a successful request, the server returns a JSON object with the following properties:\n\n- id (string): The unique identifier of the item.\n    \n- name (string): The name of the item.\n    \n- image (string): The URL of the item's image.\n    \n- description (string): The description of the item.\n    \n- taxApplicable (boolean): Indicates whether tax is applicable to the item.\n    \n- tax (number): The tax amount applicable to the item.\n    \n- baseAmount (number): The base amount of the item.\n    \n- discount (number): The discount amount applicable to the item.\n    \n- totalAmount (number): The total amount after applying tax and discount.\n    \n- subCategoryId (string): The unique identifier of the sub-category to which the item belongs.\n    \n- categoryId (string): The unique identifier of the category to which the item belongs.\n    \n- createdAt (string): The timestamp when the item was created.\n    \n- updatedAt (string): The timestamp when the item was last updated.\n    \n\n**Response**:\n\n- **200 OK**: Returns the item object.\n    \n- **404 Not Found**: Item not found."
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Validate the schema for the response fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData).to.have.property('id').that.is.a('string');\r",
+									"    pm.expect(responseData).to.have.property('name').that.is.a('string');\r",
+									"    pm.expect(responseData).to.have.property('image').that.is.a('string');\r",
+									"    pm.expect(responseData).to.have.property('description').that.is.a('string');\r",
+									"    pm.expect(responseData).to.have.property('taxApplicable').that.is.a('boolean');\r",
+									"    pm.expect(responseData).to.have.property('tax').that.is.a('number');\r",
+									"    pm.expect(responseData).to.have.property('baseAmount').that.is.a('number');\r",
+									"    pm.expect(responseData).to.have.property('discount').that.is.a('number');\r",
+									"    pm.expect(responseData).to.have.property('totalAmount').that.is.a('number');\r",
+									"    pm.expect(responseData).to.have.property('subCategoryId').that.is.a('string');\r",
+									"    pm.expect(responseData).to.have.property('categoryId').that.is.a('string');\r",
+									"    pm.expect(responseData).to.have.property('createdAt').that.is.a('string');\r",
+									"    pm.expect(responseData).to.have.property('updatedAt').that.is.a('string');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Updated item\",\r\n    \"image\": \"https://exampleimage.com\",\r\n    \"description\": \"Example Description\",\r\n    \"taxApplicable\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/item/349ee2c1-2cf8-4d24-b71d-aa1e09614814",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"item",
+								"349ee2c1-2cf8-4d24-b71d-aa1e09614814"
+							]
+						},
+						"description": "### Update Item Details\n\nThis endpoint allows the client to update the details of a specific item.\n\n#### Request Body (Partial updates allowed)\n\n- `name` (string, optional): The name of the item.\n    \n- `image` (string, optional): The URL of the item's image.\n    \n- `description` (string, optional): A brief description of the item.\n    \n- `taxApplicable` (boolean, optional): Indicates if tax is applicable to the item.\n    \n\nExample:\n\n``` json\n{\n  \"name\": \"Updated Item Name\"\n}\n\n ```\n\n#### Response (200 - OK)\n\nThe response will be a JSON object with the following schema:\n\n``` json\n{\n  \"id\": \"\",\n  \"name\": \"\",\n  \"image\": \"\",\n  \"description\": \"\",\n  \"taxApplicable\": true,\n  \"tax\": 0,\n  \"baseAmount\": 0,\n  \"discount\": 0,\n  \"totalAmount\": 0,\n  \"subCategoryId\": \"\",\n  \"categoryId\": \"\",\n  \"createdAt\": \"\",\n  \"updatedAt\": \"\"\n}\n\n ```\n\nThe response will include the updated details of the item, including the calculated tax, base amount, discount, total amount, category, and timestamps for creation and last update.\n\n**Response**:\n\n- **200 OK**: Item successfully updated.\n    \n- **404 Not Found**: Item not found.\n    \n- **400 Bad Request**: Invalid input."
+					},
+					"response": []
+				},
+				{
+					"name": "Search item by name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array');\r",
+									"    responseData.forEach(function(item) {\r",
+									"        pm.expect(item).to.have.property('id');\r",
+									"        pm.expect(item).to.have.property('name');\r",
+									"        pm.expect(item).to.have.property('image');\r",
+									"        pm.expect(item).to.have.property('description');\r",
+									"        pm.expect(item).to.have.property('taxApplicable');\r",
+									"        pm.expect(item).to.have.property('tax');\r",
+									"        pm.expect(item).to.have.property('baseAmount');\r",
+									"        pm.expect(item).to.have.property('discount');\r",
+									"        pm.expect(item).to.have.property('totalAmount');\r",
+									"        pm.expect(item).to.have.property('subCategoryId');\r",
+									"        pm.expect(item).to.have.property('categoryId');\r",
+									"        pm.expect(item).to.have.property('createdAt');\r",
+									"        pm.expect(item).to.have.property('updatedAt');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type header is application/json\", function () {\r",
+									"  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Verify response attributes\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('array').that.is.not.empty;\r",
+									"    \r",
+									"    responseData.forEach(function(item) {\r",
+									"        pm.expect(item.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"ID should be a non-empty string\");\r",
+									"        pm.expect(item.name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Name should be a non-empty string\");\r",
+									"        pm.expect(item.baseAmount).to.be.a('number').and.to.be.at.least(0, \"Base amount should be a non-negative number\");\r",
+									"        pm.expect(item.discount).to.be.a('number').and.to.be.at.least(0, \"Discount should be a non-negative number\");\r",
+									"        pm.expect(item.totalAmount).to.be.a('number').and.to.be.at.least(0, \"Total amount should be a non-negative number\");\r",
+									"        pm.expect(item.tax).to.be.a('number').and.to.be.at.least(0, \"Tax should be a non-negative number\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/item/search?name=burger",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"item",
+								"search"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "burger"
+								}
+							]
+						},
+						"description": "### GET /api/item/search\n\nThis endpoint retrieves items based on the provided search criteria.\n\n#### Request\n\n- Query Parameters\n    \n    - name: The name of the item to search for. (string)\n        \n\n**Endpoint**: `GET /search/items`\n\n#### Response\n\nThe response is an array of JSON objects with the following schema:\n\n``` json\n[\n  {\n    \"id\": 1,\n    \"name\": \"Coca-Cola\",\n    \"image\": \"http://example.com/image.jpg\",\n    \"description\": \"Refreshing soft drink\",\n    \"taxApplicable\": true,\n    \"tax\": 5.0,\n    \"baseAmount\": 50.0,\n    \"discount\": 5.0,\n    \"totalAmount\": 45.0,\n    \"categoryId\": \"1\",\n    \"createdAt\": \"\",\n    \"updatedAt\": \"\"\n}\n]\n\n ```"
+					},
+					"response": []
+				}
+			],
+			"description": "This folder is divided into 7 requests:\n\n**Items**\n\n1. Contains all endpoints related to managing items.\n    \n2. Create, retrieve and update items.\n    \n3. Retrieve items by ID or name.\n    \n4. Fetch all items, items under a category, or items under a subcategory."
+		}
+	]
+}

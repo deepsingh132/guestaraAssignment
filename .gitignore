@@ -1,0 +1,8 @@
+# Dependency directories
+$APPDATA
+# Node modules
+node_modules
+# Distribution directory
+dist
+# Keep environment variables out of version control
+.env
